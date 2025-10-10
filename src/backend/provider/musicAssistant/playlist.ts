@@ -60,7 +60,7 @@ export class PlaylistController {
         : [];
 
       return {
-        id: this.fallbackProvider,
+        id: 0,
         name: `${this.providerLabel} Playlists`,
         totalitems: totalitems ?? items.length,
         start: offset,
