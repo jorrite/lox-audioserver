@@ -150,11 +150,11 @@ export async function audioCfgGetPlaylists(url: string): Promise<CommandResult> 
   const payload = {
     id: playlist.id,
     items: playlist.items ?? [],
-    service,
+    service: 'getplaylists2',
     start,
     totalitems: playlist.totalitems ?? 0,
     type: 3,
-    user,
+    user: 'lms',
   };
 
   return response(url, 'getplaylists2', [payload]);
