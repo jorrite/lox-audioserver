@@ -88,7 +88,6 @@ export async function audioCfgGetPlaylists(url: string): Promise<CommandResult> 
 
   if (!remainder || startsWithDigit) {
     const segments = remainder.split('/').filter((segment) => segment !== undefined && segment !== '');
-
     if (segments.length >= 3 && segments[0] !== '0') {
       const [rawId, rawOffset, rawLimit] = segments;
       playlistId = decodeURIComponent(rawId);
@@ -100,6 +99,10 @@ export async function audioCfgGetPlaylists(url: string): Promise<CommandResult> 
       if (segments.length === 2) {
         start = offset;
         limit = parseNumberPart(segments[1], 10);
+      } else if (segments.length === 3) {
+        offset = parseNumberPart(segments[1], 0);
+        start = parseNumberPart(segments[1], 0);
+        limit = parseNumberPart(segments[2], 10);
       } else {
         start = offset;
         limit = 10;
