@@ -87,9 +87,7 @@ export async function audioCfgGetPlaylists(url: string): Promise<CommandResult> 
   const startsWithDigit = remainder === '' ? false : /^[0-9]/.test(remainder);
 
   if (!remainder || startsWithDigit) {
-    const segments = remainder
-      .split('/')
-      .filter((segment) => segment !== undefined && segment !== '');
+    const segments = remainder.split('/').filter((segment) => segment !== undefined && segment !== '');
 
     if (segments.length >= 3 && segments[0] !== '0') {
       const [rawId, rawOffset, rawLimit] = segments;
@@ -110,10 +108,7 @@ export async function audioCfgGetPlaylists(url: string): Promise<CommandResult> 
   } else {
     const rawSegments = remainder.split('/');
     const numericTail: string[] = [];
-    while (
-      rawSegments.length > 0 &&
-      numericTail.length < 2
-    ) {
+    while (rawSegments.length > 0 && numericTail.length < 2) {
       const candidate = rawSegments[rawSegments.length - 1];
       if (candidate === '' || !/^-?\d+$/.test(candidate)) {
         break;
@@ -154,7 +149,6 @@ export async function audioCfgGetPlaylists(url: string): Promise<CommandResult> 
 
   const payload = {
     id: playlist.id,
-    name: playlist.name,
     items: playlist.items ?? [],
     service,
     start,
