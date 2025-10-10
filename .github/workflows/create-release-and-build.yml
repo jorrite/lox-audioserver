@@ -190,7 +190,6 @@ jobs:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
     needs: release
-    if: ${{ needs.release.result == 'success' && needs.release.outputs.should_release == 'true' }}
     env:
       VERSION: ${{ needs.release.outputs.version }}
       TARGET_BRANCH: ${{ needs.release.outputs.target_branch }}
