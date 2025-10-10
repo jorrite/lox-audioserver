@@ -1,21 +1,7 @@
 import MusicAssistantProviderClient from './client';
-import {
-  PlaylistItem,
-  PlaylistResponse,
-} from '../types';
-import {
-  mapPlaylistToItem,
-  mapTrackToPlaylistItem,
-} from './mappers';
-import {
-  extractImage,
-  extractItemId,
-  extractName,
-  extractUri,
-  logError,
-  parseIdentifier,
-  safeNumber,
-} from './utils';
+import { PlaylistItem, PlaylistResponse } from '../types';
+import { mapPlaylistToItem, mapTrackToPlaylistItem } from './mappers';
+import { extractImage, extractItemId, extractName, extractUri, logError, parseIdentifier, safeNumber } from './utils';
 
 export class PlaylistController {
   constructor(
@@ -57,7 +43,8 @@ export class PlaylistController {
                     offset: 0,
                     in_library_only: inLibraryOnly || undefined,
                   });
-                  const cover = Array.isArray(firstTrack) && firstTrack.length > 0 ? extractImage(firstTrack[0]) ?? '' : '';
+                  const cover =
+                    Array.isArray(firstTrack) && firstTrack.length > 0 ? (extractImage(firstTrack[0]) ?? '') : '';
                   if (cover) {
                     mapped.coverurl = cover;
                     mapped.thumbnail = cover;
@@ -85,11 +72,7 @@ export class PlaylistController {
     }
   }
 
-  async getPlaylistItems(
-    playlistKey: string,
-    offset: number,
-    limit: number,
-  ): Promise<PlaylistResponse | undefined> {
+  async getPlaylistItems(playlistKey: string, offset: number, limit: number): Promise<PlaylistResponse | undefined> {
     const client = this.getClient();
     if (!client) return undefined;
 
@@ -122,16 +105,11 @@ export class PlaylistController {
         : [];
 
       const totalitems = safeNumber(
-        playlist?.track_count ??
-          playlist?.items?.length ??
-          playlist?.tracks?.length ??
-          tracks?.length,
+        playlist?.track_count ?? playlist?.items?.length ?? playlist?.tracks?.length ?? tracks?.length,
         mapped.length,
       );
 
-      const uri =
-        extractUri(playlist, 'playlist', itemId, provider) ??
-        `playlist:${itemId}`;
+      const uri = extractUri(playlist, 'playlist', itemId, provider) ?? `playlist:${itemId}`;
 
       const playlistCover = extractImage(playlist) ?? mapped.find((item) => item.coverurl)?.coverurl ?? '';
       if (playlistCover) {
@@ -178,27 +156,17 @@ export class PlaylistController {
 
       const mapped = mapPlaylistToItem(playlist, this.fallbackProvider);
       const rawId = extractItemId(playlist) ?? itemId;
-      const uri =
-        extractUri(playlist, 'playlist', rawId, provider) ??
-        `playlist:${rawId}`;
-      const totalitems = safeNumber(
-        playlist?.track_count ??
-          playlist?.items?.length ??
-          playlist?.tracks?.length,
-      );
+      const uri = extractUri(playlist, 'playlist', rawId, provider) ?? `playlist:${rawId}`;
+      const totalitems = safeNumber(playlist?.track_count ?? playlist?.items?.length ?? playlist?.tracks?.length);
 
       return {
-        ...mapped,
         id: uri,
+        name: mapped.name,
         audiopath: uri,
-        provider: provider ?? mapped.provider,
-        providerInstanceId: provider ?? mapped.providerInstanceId,
-        playlistProviderInstanceId: provider ?? mapped.playlistProviderInstanceId,
-        playlistCommandUri: uri,
-        playlistId: uri,
+        coverurl: mapped.coverurl,
         items: totalitems,
-        coverurl: extractImage(playlist) ?? mapped.coverurl ?? '',
-        rawId,
+        provider: provider ?? mapped.provider,
+        type: 11,
       };
     } catch (error) {
       logError('music/playlists/get_playlist', error);

@@ -23,10 +23,7 @@ export function setMusicAssistantBaseUrl(host: string, port: number): void {
   musicAssistantBaseUrl = `http://${host}:${port}`;
 }
 
-export function mapAlbumToFolderItem(
-  album: any,
-  fallbackProvider: string,
-): MediaFolderItem {
+export function mapAlbumToFolderItem(album: any, fallbackProvider: string): MediaFolderItem {
   const provider = extractProvider(album) ?? fallbackProvider;
   const rawId = extractItemId(album) ?? extractName(album) ?? '';
   const uri = normalizeMediaUri(
@@ -53,10 +50,7 @@ export function mapAlbumToFolderItem(
   };
 }
 
-export function mapArtistToFolderItem(
-  artist: any,
-  fallbackProvider: string,
-): MediaFolderItem {
+export function mapArtistToFolderItem(artist: any, fallbackProvider: string): MediaFolderItem {
   const provider = extractProvider(artist) ?? fallbackProvider;
   const rawId = extractItemId(artist) ?? extractName(artist) ?? '';
   const uri = normalizeMediaUri(
@@ -98,18 +92,16 @@ export function mapTrackToMediaItem(
   let playlistName: string | undefined;
   let playlistCover: string | undefined;
   if (albumContext) {
-    const albumRawId =
-      extractItemId(albumContext) ??
-      extractUri(albumContext) ??
-      extractName(albumContext) ??
-      '';
+    const albumRawId = extractItemId(albumContext) ?? extractUri(albumContext) ?? extractName(albumContext) ?? '';
     playlistName = extractName(albumContext) ?? albumRawId;
-    playlistCover = resolveArtwork(albumContext, [albumContext?.coverurl, albumContext?.thumbnail, albumContext?.image]);
-    playlistCommandUri =
-      normalizeMediaUri(
-        extractUri(albumContext, 'album', albumRawId, provider) ??
-          buildLibraryUri('album', albumRawId, provider),
-      );
+    playlistCover = resolveArtwork(albumContext, [
+      albumContext?.coverurl,
+      albumContext?.thumbnail,
+      albumContext?.image,
+    ]);
+    playlistCommandUri = normalizeMediaUri(
+      extractUri(albumContext, 'album', albumRawId, provider) ?? buildLibraryUri('album', albumRawId, provider),
+    );
   }
 
   const trackCover = resolveArtwork(track, [track?.coverurl, track?.thumbnail, track?.image]);
@@ -162,10 +154,7 @@ export function mapTrackToPlaylistItem(
 
   if (playlistContext) {
     const playlistRawId =
-      extractItemId(playlistContext) ??
-      extractUri(playlistContext) ??
-      extractName(playlistContext) ??
-      '';
+      extractItemId(playlistContext) ?? extractUri(playlistContext) ?? extractName(playlistContext) ?? '';
     playlistName = extractName(playlistContext) ?? playlistRawId;
     playlistCover = resolveArtwork(playlistContext, [
       playlistContext?.playlistCover,
@@ -200,49 +189,33 @@ export function mapTrackToPlaylistItem(
     album: extractAlbum(track) ?? undefined,
     artist: extractArtist(track) ?? undefined,
     title: name,
-    uniqueId: key,
-    playlistCommandUri,
-    playlistId: playlistCommandUri,
-    playlistName,
-    playlistCover: playlistCover ?? cover,
-    playlistProviderInstanceId,
-    playlistStartItem: uri,
   };
 }
 
-export function mapPlaylistToItem(
-  playlist: any,
-  fallbackProvider: string,
-): PlaylistItem {
+export function mapPlaylistToItem(playlist: any, fallbackProvider: string): PlaylistItem {
   const provider = extractProvider(playlist) ?? fallbackProvider;
   const rawId = extractItemId(playlist) ?? extractUri(playlist) ?? extractName(playlist) ?? '';
   const uri = extractUri(playlist, 'playlist', rawId, provider) ?? buildPlaylistKey(provider, rawId);
   const name = extractName(playlist) ?? rawId;
-  const cover = resolveArtwork(playlist, [playlist?.playlistCover, playlist?.coverurl, playlist?.thumbnail, playlist?.image]);
+  const cover = resolveArtwork(playlist, [
+    playlist?.playlistCover,
+    playlist?.coverurl,
+    playlist?.thumbnail,
+    playlist?.image,
+  ]);
 
   return {
     id: buildPlaylistKey(provider, rawId),
     name,
     audiopath: uri,
     coverurl: cover,
-    thumbnail: cover,
+    items: 0,
     type: FileType.PlaylistEditable,
     provider,
-    providerInstanceId: provider,
-    rawId,
-    items: safeNumber(playlist?.track_count ?? playlist?.items?.length),
-    playlistId: uri,
-    playlistName: name,
-    playlistCover: cover,
-    playlistProviderInstanceId: provider,
-    playlistCommandUri: uri,
   };
 }
 
-export function mapRadioToFolderItem(
-  radio: any,
-  fallbackProvider: string,
-): RadioFolderItem | undefined {
+export function mapRadioToFolderItem(radio: any, fallbackProvider: string): RadioFolderItem | undefined {
   const provider = extractProvider(radio) ?? fallbackProvider;
   const rawId = extractItemId(radio) ?? extractUri(radio) ?? extractName(radio);
   const name = extractName(radio) ?? rawId;
